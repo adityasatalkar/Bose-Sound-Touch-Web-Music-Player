@@ -7,10 +7,9 @@ const volUpButton = document.getElementById('vol-up');
 const volDownButton = document.getElementById('vol-down');
 const volMuteButton = document.getElementById('vol-mute');
 
-var slider = document.getElementById("myRange");
-var output = document.getElementById("demo");
+var slider = document.getElementById("volume-range");
+var output = document.getElementById("volume-level");
 output.innerHTML = slider.value;
-
 
 var count = 0;
 
@@ -43,6 +42,8 @@ function getData(endpoint, element1) {
     var titledata = ""
     var artistdata = ""
     var albumdata = ""
+    var songMax = ""
+    var songcurrentprogress = ""
     console.log('getData')
     var img = document.getElementById('image');
     var xmlHttpRequest = new XMLHttpRequest();
@@ -60,11 +61,52 @@ function getData(endpoint, element1) {
             document.getElementById("artist").innerHTML = artistdata;
             albumdata = doc.getElementsByTagName(element1)[0].getElementsByTagName('album')[0].firstChild.nodeValue;
             document.getElementById("album").innerHTML = albumdata;
-            // count = volume;
+            songMax = doc.getElementsByTagName(element1)[0].getElementsByTagName('time')[0].getAttribute('total');
+            document.getElementById("progresssong").max = songMax;
+            console.log('Song Max : ' + songMax);
+            // document.getElementById("song-length").innerHTML = (songMax/60).toFixed(2);
+            songcurrentprogress = doc.getElementsByTagName(element1)[0].getElementsByTagName('time')[0].firstChild.nodeValue;
+            document.getElementById("progresssong").value = songcurrentprogress;
+            console.log('Song current : ' + songcurrentprogress);
+            // document.getElementById("song-current").innerHTML = (songcurrentprogress/60).toFixed(2) ;
+        }
+    };
+    getVolumeLevel('volume','actualvolume');
+    xmlHttpRequest.send(null);
+}
+
+function getVolumeLevel(endpoint, element1) {
+    var doc = ""
+    var actualvolume = ""
+    console.log('getVolumeLevel')
+    var xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open("GET", apis.boseSoundTouch.getUrl(endpoint), true);
+    xmlHttpRequest.onreadystatechange = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+            doc = xmlHttpRequest.responseXML;
+            console.log(doc)
+            actualvolume = doc.getElementsByTagName(endpoint)[0].getElementsByTagName(element1)[0].firstChild.nodeValue;
+            slider.value = actualvolume;
+            output.innerHTML = actualvolume;
         }
     };
     xmlHttpRequest.send(null);
 }
+
+function bluetooth() {
+    console.log('Bluetooth')
+    apiCall('select',apis.boseSoundTouch.getBluetoothUrlBody('BLUETOOTH'))
+}
+
+function power() {
+    var state = "press"
+    var sender = "Gabbo"
+    var key = "POWER"
+    console.log(key)
+    var bodyOfRequest = apis.boseSoundTouch.getKeyUrlBody(state,sender,key)
+    apiCall('key', bodyOfRequest)
+}
+
 
 const apiCall = (endpoint, bodyOfRequest) => {
 	console.log("Endpoint : " + endpoint + "\n" + "Body of Request : " + bodyOfRequest)
@@ -127,7 +169,7 @@ slider.oninput = function() {
 window.setInterval(function(){
   /// call your function here
     getData('now_playing','nowPlaying')
-}, 5000);
+}, 1000);
 
 // powerButton.addEventListener('click', power);
 playButton.addEventListener('click', playSong);
