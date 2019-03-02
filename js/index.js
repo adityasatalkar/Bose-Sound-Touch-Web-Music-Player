@@ -44,6 +44,7 @@ function getData(endpoint, element1) {
     var albumdata = ""
     var songMax = ""
     var songcurrentprogress = ""
+    var source = ""
     console.log('getData')
     var img = document.getElementById('image');
     var xmlHttpRequest = new XMLHttpRequest();
@@ -52,23 +53,43 @@ function getData(endpoint, element1) {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
             doc = xmlHttpRequest.responseXML;
             console.log(doc)
-            imagedata = doc.getElementsByTagName(element1)[0].getElementsByTagName('art')[0].firstChild.nodeValue;
-            img.setAttribute("src", imagedata);
-            console.log(imagedata)
-            titledata = doc.getElementsByTagName(element1)[0].getElementsByTagName('track')[0].firstChild.nodeValue;
-            document.getElementById("title").innerHTML = titledata;
-            artistdata = doc.getElementsByTagName(element1)[0].getElementsByTagName('artist')[0].firstChild.nodeValue;
-            document.getElementById("artist").innerHTML = artistdata;
-            albumdata = doc.getElementsByTagName(element1)[0].getElementsByTagName('album')[0].firstChild.nodeValue;
-            document.getElementById("album").innerHTML = albumdata;
-            songMax = doc.getElementsByTagName(element1)[0].getElementsByTagName('time')[0].getAttribute('total');
-            document.getElementById("progresssong").max = songMax;
-            console.log('Song Max : ' + songMax);
-            // document.getElementById("song-length").innerHTML = (songMax/60).toFixed(2);
-            songcurrentprogress = doc.getElementsByTagName(element1)[0].getElementsByTagName('time')[0].firstChild.nodeValue;
-            document.getElementById("progresssong").value = songcurrentprogress;
-            console.log('Song current : ' + songcurrentprogress);
-            // document.getElementById("song-current").innerHTML = (songcurrentprogress/60).toFixed(2) ;
+
+            source = doc.getElementsByTagName(element1)[0].getElementsByTagName('ContentItem')[0].getAttribute('source');
+            if (source == "AUX") {
+                console.log('Source : ' + source);
+                img.setAttribute("src", "assets/bostsa5a.jpg")
+                titledata = "AUX"
+                document.getElementById("title").innerHTML = titledata;
+                artistdata = "Bose SA-5"; // SA-5
+                document.getElementById("artist").innerHTML = artistdata;
+            } else if (source == "BLUETOOTH") {
+                console.log('Source : ' + source);
+                img.setAttribute("src", "assets/bostsa5a.jpg")
+                titledata = "BLUETOOTH"
+                document.getElementById("title").innerHTML = titledata;
+                artistdata = "Bose SA-5"; // SA-5
+                document.getElementById("artist").innerHTML = artistdata;
+            } else {
+                imagedata = doc.getElementsByTagName(element1)[0].getElementsByTagName('art')[0].firstChild.nodeValue;
+                img.setAttribute("src", imagedata);
+                console.log(imagedata)
+                titledata = doc.getElementsByTagName(element1)[0].getElementsByTagName('track')[0].firstChild.nodeValue;
+                document.getElementById("title").innerHTML = titledata;
+                artistdata = doc.getElementsByTagName(element1)[0].getElementsByTagName('artist')[0].firstChild.nodeValue;
+                document.getElementById("artist").innerHTML = artistdata;
+                albumdata = doc.getElementsByTagName(element1)[0].getElementsByTagName('album')[0].firstChild.nodeValue;
+                document.getElementById("album").innerHTML = albumdata;
+                
+                songMax = doc.getElementsByTagName(element1)[0].getElementsByTagName('time')[0].getAttribute('total');
+                document.getElementById("progresssong").max = songMax;
+                console.log('Song Max : ' + songMax);
+                // document.getElementById("song-length").innerHTML = (songMax/60).toFixed(2);
+                
+                songcurrentprogress = doc.getElementsByTagName(element1)[0].getElementsByTagName('time')[0].firstChild.nodeValue;
+                document.getElementById("progresssong").value = songcurrentprogress;
+                console.log('Song current : ' + songcurrentprogress);
+                // document.getElementById("song-current").innerHTML = (songcurrentprogress/60).toFixed(2) ;
+            }
         }
     };
     getVolumeLevel('volume','actualvolume');
