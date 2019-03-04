@@ -45,6 +45,7 @@ function getData(endpoint, element1) {
     var songMax = ""
     var songcurrentprogress = ""
     var source = ""
+    var itemName = ""
     console.log('getData')
     var img = document.getElementById('image');
     var xmlHttpRequest = new XMLHttpRequest();
@@ -69,7 +70,24 @@ function getData(endpoint, element1) {
                 document.getElementById("title").innerHTML = titledata;
                 artistdata = "Bose SA-5"; // SA-5
                 document.getElementById("artist").innerHTML = artistdata;
+                titledata = doc.getElementsByTagName(element1)[0].getElementsByTagName('track')[0].firstChild.nodeValue;
+                document.getElementById("title").innerHTML = titledata;
+                //display itemName to display device Name
+                titledata = doc.getElementsByTagName(element1)[0].getElementsByTagName('track')[0].firstChild.nodeValue;
+                document.getElementById("title").innerHTML = titledata;
+                artistdata = doc.getElementsByTagName(element1)[0].getElementsByTagName('artist')[0].firstChild.nodeValue;
+                document.getElementById("artist").innerHTML = artistdata;
+                itemName = doc.getElementsByTagName(element1)[0].getElementsByTagName('itemName')[0].firstChild.nodeValue;
+                document.getElementById("album").innerHTML = albumdata;
+            } else if (source == "STANDBY") {
+                console.log('Source : ' + source);
+                img.setAttribute("src", "assets/bostsa5a.jpg")
+                titledata = "STANDBY"
+                document.getElementById("title").innerHTML = titledata;
+                artistdata = "Bose SA-5"; // SA-5
+                document.getElementById("artist").innerHTML = artistdata;
             } else {
+                //display itemName to display genre of the song currently playing
                 imagedata = doc.getElementsByTagName(element1)[0].getElementsByTagName('art')[0].firstChild.nodeValue;
                 img.setAttribute("src", imagedata);
                 console.log(imagedata)
@@ -79,7 +97,6 @@ function getData(endpoint, element1) {
                 document.getElementById("artist").innerHTML = artistdata;
                 albumdata = doc.getElementsByTagName(element1)[0].getElementsByTagName('album')[0].firstChild.nodeValue;
                 document.getElementById("album").innerHTML = albumdata;
-                
                 songMax = doc.getElementsByTagName(element1)[0].getElementsByTagName('time')[0].getAttribute('total');
                 document.getElementById("progresssong").max = songMax;
                 console.log('Song Max : ' + songMax);
